@@ -270,19 +270,18 @@
           result.innerHTML = `
             <div><strong>Высокая вероятность наличия ВЗК</strong></div>
             <div class="probability">${percent}%</div>
-            <div>Расчётная вероятность выше диагностического порога P = 0,73.</div>
-            <div class="small">z = ${z.toFixed(3)}; P = ${p.toFixed(4)}. При данном пороге чувствительность модели составляет 78,8%, специфичность — 97,2%.</div>
+            <div>Расчётная вероятность превышает оптимальное пороговое значение P = 0,73.</div>
+            <div class="small">При данном пороге чувствительность модели составляет 78,8%, специфичность — 97,2%.</div>
           `;
         } else {
           result.className = 'result show low';
           result.innerHTML = `
-            <div><strong>Вероятность наличия ВЗК ниже диагностического порога</strong></div>
+            <div><strong>Вероятность ниже диагностического порога</strong></div>
             <div class="probability">${percent}%</div>
-            <div>Расчётная вероятность ниже порогового значения P = 0,73.</div>
-            <div class="small">z = ${z.toFixed(3)}; P = ${p.toFixed(4)}. Результат следует сопоставлять с клиническими, эндоскопическими и лабораторными данными.</div>
+            <div>Расчётная вероятность ниже оптимального порогового значения P = 0,73.</div>
+            <div class="small">Результат не соответствует критерию высокой вероятности наличия заболевания. Модель требует дополнительной валидации на независимой выборке.</div>
           `;
-        }
-      } catch (error) {
+        } catch (error) {
         const result = document.getElementById('result');
         result.className = 'result show warning';
         result.innerHTML = `<strong>Ошибка ввода</strong><br>${error.message}`;
