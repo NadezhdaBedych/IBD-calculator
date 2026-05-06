@@ -221,6 +221,13 @@
 
       <div id="result" class="result"></div>
 
+      <button class="secondary" onclick="toggleDetails()">Показать подробности модели</button>
+      <div id="details" style="display:none; margin-top:12px;" class="note">
+        Площадь под ROC-кривой: AUC = 0,902 (95% ДИ 0,858–0,947).<br>
+        Оптимальный порог вероятности (индекс Юдена): P = 0,73.<br>
+        Чувствительность — 78,8%, специфичность — 97,2%.
+      </div>
+
       <div class="formula">
         <strong>Формула модели:</strong><br>
         P = 1 / (1 + e<sup>−z</sup>)<br>
@@ -284,6 +291,11 @@
         result.className = 'result show warning';
         result.innerHTML = `<strong>Ошибка ввода</strong><br>${error.message}`;
       }
+    }
+
+    function toggleDetails() {
+      const d = document.getElementById('details');
+      d.style.display = d.style.display === 'none' ? 'block' : 'none';
     }
 
     function resetCalculator() {
