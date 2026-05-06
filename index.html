@@ -4,308 +4,162 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Калькулятор вероятности ВЗК</title>
+
   <style>
-    :root {
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #2563eb;
-      --primary-light: #dbeafe;
-      --success: #166534;
-      --success-bg: #f0fdf4;
-      --danger: #991b1b;
-      --danger-bg: #fef2f2;
-      --warning: #92400e;
-      --warning-bg: #fffbeb;
-    }
-
-    * { box-sizing: border-box; }
-
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 32px 18px 48px;
-    }
-
-    .header {
-      background: linear-gradient(135deg, #1d4ed8, #0f766e);
-      color: white;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 16px 35px rgba(31, 41, 55, 0.15);
-      margin-bottom: 24px;
-    }
-
-    .header h1 {
-      margin: 0 0 10px;
-      font-size: 30px;
-      line-height: 1.2;
-    }
-
-    .header p {
+      background: #f6f7fb;
       margin: 0;
-      opacity: 0.94;
+      padding: 30px;
     }
 
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 12px 26px rgba(31, 41, 55, 0.08);
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 22px;
-    }
-
-    .meta {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 18px;
-    }
+    h1 { margin-top: 0; }
 
     label {
       display: block;
-      font-weight: 700;
-      margin: 12px 0 6px;
-      font-size: 14px;
+      margin-top: 12px;
+      font-weight: bold;
     }
 
     input {
       width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 11px 12px;
-      font-size: 15px;
-      outline: none;
-      transition: border 0.15s, box-shadow 0.15s;
-    }
-
-    input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-light);
-    }
-
-    .button-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
     button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
       border: none;
-      border-radius: 12px;
-      padding: 12px 14px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    .primary {
-      background: var(--primary);
+      border-radius: 10px;
+      background: #2563eb;
       color: white;
-      flex: 1;
-    }
-
-    .secondary {
-      background: #eef2ff;
-      color: #3730a3;
+      font-weight: bold;
+      cursor: pointer;
     }
 
     .result {
-      margin-top: 18px;
-      border-radius: 16px;
-      padding: 16px;
-      border: 1px solid var(--border);
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
       display: none;
     }
 
-    .result.show { display: block; }
+    .high { background: #fef2f2; color: #991b1b; }
+    .low { background: #f0fdf4; color: #166534; }
 
-    .result.low {
-      background: var(--success-bg);
-      color: var(--success);
-      border-color: #bbf7d0;
-    }
-
-    .result.high {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border-color: #fecaca;
-    }
-
-    .result.warning {
-      background: var(--warning-bg);
-      color: var(--warning);
-      border-color: #fde68a;
-    }
-
-    .probability {
-      font-size: 34px;
-      font-weight: 800;
-      margin: 4px 0 8px;
-    }
-
-    .formula, .note {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 14px;
+    .details {
+      margin-top: 15px;
       font-size: 14px;
-    }
-
-    .formula {
-      background: #f9fafb;
-      color: #374151;
-      border: 1px solid var(--border);
-      overflow-wrap: anywhere;
-    }
-
-    .note {
-      background: var(--warning-bg);
-      color: var(--warning);
-      border: 1px solid #fde68a;
-    }
-
-    .small {
-      color: inherit;
-      opacity: 0.85;
-      font-size: 13px;
-      margin-top: 8px;
+      display: none;
     }
   </style>
 </head>
+
 <body>
-  <main class="container">
-    <section class="header">
-      <h1>Калькулятор вероятности воспалительного заболевания кишечника</h1>
-      <p>
-        Расчёт индивидуальной вероятности наличия ВЗК по диагностической модели бинарной логистической регрессии.
-      </p>
-    </section>
 
-    <section class="card">
-      <h2>Диагностическая модель ВЗК</h2>
-      
+<div class="card">
 
-      <label for="albumin">Альбумин (г/л)</label>
-      <input id="albumin" type="number" step="any" placeholder="г/л" />
+  <h1>Калькулятор вероятности ВЗК</h1>
 
-      <label for="crp">СРБ (г/л)</label>
-      <input id="crp" type="number" step="any" placeholder="г/л" />
+  <label>Альбумин (г/л)</label>
+  <input id="albumin" type="number">
 
-      <label for="calprotectin">Фекальный кальпротектин (мкг/г)</label>
-      <input id="calprotectin" type="number" step="any" placeholder="мкг/г" />
+  <label>СРБ (г/л)</label>
+  <input id="crp" type="number">
 
-      <label for="tmao">ТМАО (мкмоль/л)</label>
-      <input id="tmao" type="number" step="any" placeholder="мкмоль/л" />
+  <label>Фекальный кальпротектин (мкг/г)</label>
+  <input id="calprotectin" type="number">
 
-      <label for="lps">ЛПС-связывающий белок (нг/мл)</label>
-      <input id="lps" type="number" step="any" placeholder="нг/мл" />
+  <label>ТМАО (мкмоль/л)</label>
+  <input id="tmao" type="number">
 
-      <div class="button-row">
-        <button class="primary" onclick="calculateIBD()">Рассчитать</button>
-        <button class="secondary" onclick="resetCalculator()">Сброс</button>
-      </div>
+  <label>ЛПС-белок (нг/мл)</label>
+  <input id="lps" type="number">
 
-      <div id="result" class="result"></div>
+  <button onclick="calculate()">Рассчитать</button>
 
-      <button class="secondary" onclick="toggleDetails()">Показать подробности модели</button>
-      <div id="details" style="display:none; margin-top:12px;" class="note">
-        Площадь под ROC-кривой: AUC = 0,902 (95% ДИ 0,858–0,947).<br>
-        Оптимальный порог вероятности (индекс Юдена): P = 0,73.<br>
-        Чувствительность — 78,8%, специфичность — 97,2%.
-      </div>
+  <div id="result" class="result"></div>
 
-      <div class="formula">
-        <strong>Формула модели:</strong><br>
-        P = 1 / (1 + e<sup>−z</sup>)<br>
-        z = −0,046 − 0,013×альбумин − 0,011×СРБ + 0,055×кальпротектин + 0,133×ТМАО − 0,043×ЛПС-белок
-      </div>
+  <button onclick="toggleDetails()">Показать подробности модели</button>
 
-      <div class="note">
-        <strong>Единицы измерения:</strong> альбумин — г/л; СРБ — г/л; фекальный кальпротектин — мкг/г; ТМАО — мкмоль/л; ЛПС-связывающий белок — нг/мл.<br><br>
-        <strong>Важно:</strong> результат является расчётной вероятностью по исследовательской модели и не заменяет клиническое заключение. Модель требует дополнительной внешней валидации на независимой выборке.
-      </div>
-    </section>
-  </main>
+  <div id="details" class="details">
+    Площадь под ROC-кривой: AUC = 0,902 (95% ДИ 0,858–0,947).<br>
+    Оптимальный порог вероятности, определённый по ROC-анализу с использованием индекса Юдена: P = 0,73.<br>
+    Чувствительность модели составляет 78,8%, специфичность — 97,2%.
+  </div>
 
-  <script>
-    const THRESHOLD = 0.73;
+</div>
 
-    function logistic(z) {
-      return 1 / (1 + Math.exp(-z));
+<script>
+
+const THRESHOLD = 0.73;
+
+function calculate() {
+  try {
+    const albumin = parseFloat(document.getElementById('albumin').value);
+    const crp = parseFloat(document.getElementById('crp').value);
+    const calprotectin = parseFloat(document.getElementById('calprotectin').value);
+    const tmao = parseFloat(document.getElementById('tmao').value);
+    const lps = parseFloat(document.getElementById('lps').value);
+
+    if ([albumin, crp, calprotectin, tmao, lps].some(isNaN)) {
+      throw new Error("Заполните все поля");
     }
 
-    function getValue(id) {
-      const rawValue = document.getElementById(id).value.replace(',', '.');
-      const value = parseFloat(rawValue);
-      if (Number.isNaN(value)) {
-        throw new Error('Пожалуйста, заполните все поля числовыми значениями.');
-      }
-      return value;
+    const z = -0.046
+      - 0.013 * albumin
+      - 0.011 * crp
+      + 0.055 * calprotectin
+      + 0.133 * tmao
+      - 0.043 * lps;
+
+    const p = 1 / (1 + Math.exp(-z));
+    const percent = (p * 100).toFixed(1);
+
+    const result = document.getElementById("result");
+
+    if (p >= THRESHOLD) {
+      result.className = "result high";
+      result.innerHTML = `
+        <b>Высокая вероятность наличия ВЗК</b><br><br>
+        ${percent}%<br>
+        Вероятность ≥ 0,73
+      `;
+    } else {
+      result.className = "result low";
+      result.innerHTML = `
+        <b>Вероятность ниже диагностического порога</b><br><br>
+        ${percent}%<br>
+        Вероятность < 0,73
+      `;
     }
 
-    function calculateIBD() {
-      try {
-        const albumin = getValue('albumin');
-        const crp = getValue('crp');
-        const calprotectin = getValue('calprotectin');
-        const tmao = getValue('tmao');
-        const lps = getValue('lps');
+    result.style.display = "block";
 
-        const z = -0.046 - 0.013 * albumin - 0.011 * crp + 0.055 * calprotectin + 0.133 * tmao - 0.043 * lps;
-        const p = logistic(z);
-        const percent = (p * 100).toFixed(1);
-        const result = document.getElementById('result');
+  } catch (e) {
+    alert(e.message);
+  }
+}
 
-        if (p >= THRESHOLD) {
-          result.className = 'result show high';
-          result.innerHTML = `
-            <div><strong>Высокая вероятность наличия ВЗК</strong></div>
-            <div class="probability">${percent}%</div>
-            <div>Расчётная вероятность превышает оптимальное пороговое значение P = 0,73.</div>
-            <div class="small">При данном пороге чувствительность модели составляет 78,8%, специфичность — 97,2%.</div>
-          `;
-        } else {
-          result.className = 'result show low';
-          result.innerHTML = `
-            <div><strong>Вероятность ниже диагностического порога</strong></div>
-            <div class="probability">${percent}%</div>
-            <div>Расчётная вероятность ниже оптимального порогового значения P = 0,73.</div>
-            <div class="small">Результат не соответствует критерию высокой вероятности наличия заболевания. Модель требует дополнительной валидации на независимой выборке.</div>
-          `;
-        } catch (error) {
-        const result = document.getElementById('result');
-        result.className = 'result show warning';
-        result.innerHTML = `<strong>Ошибка ввода</strong><br>${error.message}`;
-      }
-    }
+function toggleDetails() {
+  const d = document.getElementById("details");
+  d.style.display = d.style.display === "none" ? "block" : "none";
+}
 
-    function toggleDetails() {
-      const d = document.getElementById('details');
-      d.style.display = d.style.display === 'none' ? 'block' : 'none';
-    }
+</script>
 
-    function resetCalculator() {
-      ['albumin', 'crp', 'calprotectin', 'tmao', 'lps'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-      const result = document.getElementById('result');
-      result.className = 'result';
-      result.innerHTML = '';
-    }
-  </script>
 </body>
 </html>
