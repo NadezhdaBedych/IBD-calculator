@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Расчет вероятности воспалительных заболеваний кишечника</title>
+  <title>Комплексная оценка вероятности ВЗК</title>
   <style>
+    :root {
+      --ibd-purple: #812990;
+      --ibd-purple-dark: #5f126b;
+      --ibd-purple-mid: #9a35a9;
+      --ibd-purple-soft: #f4e6f7;
+      --ibd-lilac: #ead2ef;
+      --text: #24172a;
+      --muted: #6f5f75;
+      --border: #e5d5ea;
+      --white: #ffffff;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -12,61 +24,143 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      color: #1f2937;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(129, 41, 144, 0.16), transparent 30%),
+        radial-gradient(circle at 85% 18%, rgba(154, 53, 169, 0.14), transparent 28%),
+        linear-gradient(135deg, #fbf7fc 0%, #f2e3f5 48%, #ffffff 100%);
     }
 
     .container {
-      max-width: 900px;
-      margin: 40px auto;
+      max-width: 980px;
+      margin: 36px auto;
       padding: 24px;
     }
 
     .card {
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      position: relative;
       overflow: hidden;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(129, 41, 144, 0.14);
+      border-radius: 28px;
+      box-shadow: 0 18px 48px rgba(95, 18, 107, 0.18);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -70px;
+      right: -120px;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: rgba(129, 41, 144, 0.08);
+      pointer-events: none;
     }
 
     .header {
-      padding: 28px 32px;
-      background: #1f4e79;
-      color: #ffffff;
+      position: relative;
+      min-height: 190px;
+      padding: 34px 36px 30px;
+      color: var(--white);
+      background:
+        linear-gradient(135deg, rgba(95, 18, 107, 0.98), rgba(129, 41, 144, 0.96)),
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.24), transparent 30%);
     }
 
-    .header h1 {
+    .header::after {
+      content: "";
+      position: absolute;
+      left: -80px;
+      bottom: -42px;
+      width: 420px;
+      height: 105px;
+      border-radius: 0 0 220px 220px;
+      border-bottom: 46px solid rgba(255, 255, 255, 0.18);
+      transform: rotate(3deg);
+      pointer-events: none;
+    }
+
+    .brand-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .title-block h1 {
       margin: 0;
-      font-size: 26px;
-      line-height: 1.3;
+      max-width: 680px;
+      font-size: 30px;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 16px;
+    }
+
+    .icons-wrap {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-shrink: 0;
+    }
+
+    .gut-icon,
+    .ribbon-icon {
+      width: 78px;
+      height: 78px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 28px rgba(40, 0, 50, 0.14);
+    }
+
+    .ribbon-icon {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .tabs {
       display: flex;
-      border-bottom: 1px solid #e5e7eb;
-      background: #f9fafb;
+      border-bottom: 1px solid var(--border);
+      background: #fcf8fd;
     }
 
     .tab-button {
       flex: 1;
-      padding: 16px;
+      padding: 17px;
       border: none;
       background: transparent;
       cursor: pointer;
       font-size: 16px;
-      font-weight: 600;
-      color: #4b5563;
+      font-weight: 700;
+      color: #604368;
+      transition: 0.2s ease;
+    }
+
+    .tab-button:hover {
+      background: #f8eefb;
+      color: var(--ibd-purple);
     }
 
     .tab-button.active {
-      background: #ffffff;
-      color: #1f4e79;
-      border-bottom: 3px solid #1f4e79;
+      background: var(--white);
+      color: var(--ibd-purple);
+      border-bottom: 4px solid var(--ibd-purple);
     }
 
     .tab-content {
       display: none;
-      padding: 32px;
+      padding: 34px;
     }
 
     .tab-content.active {
@@ -86,21 +180,24 @@
     }
 
     label {
-      font-weight: 600;
-      color: #374151;
+      font-weight: 700;
+      color: #38223f;
     }
 
     input {
-      padding: 12px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
+      padding: 13px 14px;
+      border: 1px solid #d9c4df;
+      border-radius: 13px;
       font-size: 16px;
+      color: var(--text);
+      background: #fff;
+      transition: 0.2s ease;
     }
 
     input:focus {
       outline: none;
-      border-color: #1f4e79;
-      box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.15);
+      border-color: var(--ibd-purple);
+      box-shadow: 0 0 0 4px rgba(129, 41, 144, 0.14);
     }
 
     .actions {
@@ -112,98 +209,131 @@
 
     button.calculate,
     button.reset {
-      padding: 13px 22px;
+      padding: 14px 23px;
       border: none;
-      border-radius: 10px;
+      border-radius: 13px;
       cursor: pointer;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     button.calculate {
-      background: #1f4e79;
-      color: #ffffff;
+      background: linear-gradient(135deg, var(--ibd-purple-dark) 0%, var(--ibd-purple) 55%, var(--ibd-purple-mid) 100%);
+      color: var(--white);
+      box-shadow: 0 10px 22px rgba(129, 41, 144, 0.22);
+    }
+
+    button.calculate:hover,
+    button.reset:hover {
+      transform: translateY(-1px);
     }
 
     button.reset {
-      background: #e5e7eb;
-      color: #374151;
+      background: #f1e7f4;
+      color: var(--ibd-purple-dark);
+      border: 1px solid #dbc4e2;
     }
 
     .result {
-      margin-top: 28px;
+      margin-top: 24px;
       padding: 22px;
-      border-radius: 14px;
+      border-radius: 18px;
       display: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result::before {
+      content: "";
+      position: absolute;
+      right: -32px;
+      top: -32px;
+      width: 115px;
+      height: 115px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.48);
     }
 
     .result.high {
       display: block;
-      background: #fee2e2;
-      border: 1px solid #ef4444;
-      color: #991b1b;
+      background: linear-gradient(135deg, #fff6e8 0%, #fdeccf 100%);
+      border: 1px solid #e5a43a;
+      color: #714300;
     }
 
     .result.low {
       display: block;
-      background: #dcfce7;
-      border: 1px solid #22c55e;
-      color: #166534;
+      background: linear-gradient(135deg, #effaf2 0%, #daf5e1 100%);
+      border: 1px solid #61c27b;
+      color: #155c2a;
     }
 
     .result h2 {
       margin: 0 0 8px;
       font-size: 22px;
+      position: relative;
     }
 
     .result p {
       margin: 6px 0 0;
       font-size: 16px;
+      position: relative;
     }
 
     .details-box {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
+      background: linear-gradient(135deg, #fbf5fd 0%, #ffffff 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
       padding: 22px;
       margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(95, 18, 107, 0.06);
     }
 
     .details-box h2,
     .details-box h3 {
       margin-top: 0;
-      color: #1f4e79;
+      color: var(--ibd-purple);
     }
 
     .formula {
       padding: 16px;
       background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
+      border: 1px solid #e2cce8;
+      border-radius: 13px;
       font-family: Consolas, monospace;
       overflow-x: auto;
       line-height: 1.6;
+      color: #32163a;
     }
 
     .note {
-      margin-top: 20px;
+      margin-top: 14px;
       font-size: 14px;
-      color: #6b7280;
+      color: var(--muted);
       line-height: 1.5;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 800px) {
       .container {
         margin: 0;
         padding: 12px;
+      }
+
+      .brand-row {
+        align-items: flex-start;
+      }
+
+      .icons-wrap {
+        display: none;
       }
 
       .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .header h1 {
-        font-size: 22px;
+      .title-block h1 {
+        font-size: 24px;
       }
 
       .tab-content {
@@ -216,12 +346,35 @@
   <div class="container">
     <div class="card">
       <div class="header">
-        <h1>Расчет вероятности воспалительных заболеваний кишечника</h1>
+        <div class="brand-row">
+          <div class="title-block">
+            <h1>Комплексная оценка вероятности воспалительных заболеваний кишечника</h1>
+            <p class="subtitle">Прогностический расчет по лабораторным маркерам</p>
+          </div>
+
+          <div class="icons-wrap" aria-hidden="true">
+            <div class="gut-icon">
+              <svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 11C13 16 12 25 17 31C20 35 26 36 29 32C32 28 29 23 25 24C21 25 22 31 27 31C35 31 39 21 33 16C28 12 22 15 22 22V42C22 50 29 55 37 52C45 49 48 40 43 34C40 30 34 29 31 33C28 37 31 43 36 42C41 41 41 35 36 35" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M45 13C49 18 50 25 47 31" stroke="white" stroke-width="4" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div class="ribbon-icon">
+              <svg width="54" height="54" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 8C22 18 18 31 17 53" stroke="white" stroke-width="7" stroke-linecap="round"/>
+                <path d="M32 8C43 18 47 31 48 53" stroke="white" stroke-width="7" stroke-linecap="round"/>
+                <path d="M21 36C27 32 37 32 43 36" stroke="white" stroke-width="7" stroke-linecap="round"/>
+                <path d="M31 9C23 20 18 33 13 53" stroke="#812990" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="tabs">
-        <button class="tab-button active" onclick="openTab('calculator')">Калькулятор</button>
-        <button class="tab-button" onclick="openTab('details')">Подробности модели</button>
+        <button class="tab-button active" onclick="openTab(event, 'calculator')">Калькулятор</button>
+        <button class="tab-button" onclick="openTab(event, 'details')">Подробности модели</button>
       </div>
 
       <div id="calculator" class="tab-content active">
@@ -259,26 +412,46 @@
           </div>
         </form>
 
-        <div id="result" class="result">
-          <h2 id="resultText"></h2>
-          <p id="probabilityText"></p>
+        <div id="mainResult" class="result">
+          <h2 id="mainResultText"></h2>
+          <p id="mainProbabilityText"></p>
+          <p><strong>Основная модель:</strong> с учетом фекального кальпротектина.</p>
+          <p id="calprotectinInterpretation" class="note"></p>
         </div>
 
-        
+        <div id="additionalResult" class="result">
+          <h2 id="additionalResultText"></h2>
+          <p id="additionalProbabilityText"></p>
+          <p><strong>Дополнительная модель:</strong> без учета фекального кальпротектина.</p>
+        </div>
       </div>
 
       <div id="details" class="tab-content">
         <div class="details-box">
-          <h2>Подробности модели</h2>
+          <h2>Основная модель</h2>
+          <p><strong>AUC:</strong> 0,902.</p>
           <p><strong>Чувствительность модели:</strong> 78,8%.</p>
           <p><strong>Специфичность модели:</strong> 97,2%.</p>
         </div>
 
         <div class="details-box">
-          <h3>Формула расчета</h3>
+          <h3>Формула основной модели</h3>
           <div class="formula">
             P = 1 / (1 + e<sup>-z</sup>)<br />
             z = -0,046 − 0,013 × альбумин − 0,011 × СРБ + 0,055 × кальпротектин + 0,133 × ТМАО − 0,043 × ЛПС-белок
+          </div>
+        </div>
+
+        <div class="details-box">
+          <h2>Дополнительная модель</h2>
+          <p><strong>AUC:</strong> 0,721.</p>
+        </div>
+
+        <div class="details-box">
+          <h3>Формула дополнительной модели</h3>
+          <div class="formula">
+            P = 1 / (1 + e<sup>-z</sup>)<br />
+            z = 0,974 − 0,003 × альбумин + 0,113 × СРБ − 0,117 × ТМАО + 0,004 × ЛПС-белок
           </div>
         </div>
       </div>
@@ -286,7 +459,7 @@
   </div>
 
   <script>
-    function openTab(tabName) {
+    function openTab(event, tabName) {
       const contents = document.querySelectorAll('.tab-content');
       const buttons = document.querySelectorAll('.tab-button');
 
@@ -306,39 +479,90 @@
       const tmao = parseFloat(document.getElementById('tmao').value);
       const lps = parseFloat(document.getElementById('lps').value);
 
-      const z = -0.046
+      const mainZ = -0.046
         - 0.013 * albumin
         - 0.011 * crp
-        + 0.055 * (calprotectin / 100)
+        + 0.055 * calprotectin
         + 0.133 * tmao
         - 0.043 * lps;
 
-      const probability = 1 / (1 + Math.exp(-z));
-      const threshold = 0.73;
+      const additionalZ = 0.974
+        - 0.003 * albumin
+        + 0.113 * crp
+        - 0.117 * tmao
+        + 0.004 * lps;
 
-      const resultBlock = document.getElementById('result');
-      const resultText = document.getElementById('resultText');
-      const probabilityText = document.getElementById('probabilityText');
+      const mainProbability = 1 / (1 + Math.exp(-mainZ));
+      const additionalProbability = 1 / (1 + Math.exp(-additionalZ));
+
+      const mainThreshold = 0.73;
+      const additionalThreshold = 0.73;
+
+      updateCalprotectinInterpretation(calprotectin);
+
+      showResult(
+        'mainResult',
+        'mainResultText',
+        'mainProbabilityText',
+        mainProbability,
+        mainThreshold,
+        'Высокая вероятность наличия ВЗК',
+        'Низкая вероятность наличия ВЗК'
+      );
+
+      showResult(
+        'additionalResult',
+        'additionalResultText',
+        'additionalProbabilityText',
+        additionalProbability,
+        additionalThreshold,
+        'Повышенная вероятность воспалительных изменений',
+        'Низкая вероятность воспалительных изменений'
+      );
+    });
+
+    function updateCalprotectinInterpretation(calprotectin) {
+      const interpretation = document.getElementById('calprotectinInterpretation');
+
+      if (calprotectin < 50) {
+        interpretation.textContent = 'Уровень фекального кальпротектина не повышен.';
+      } else if (calprotectin >= 50 && calprotectin <= 200) {
+        interpretation.textContent = 'Пограничное повышение фекального кальпротектина (50–200 мкг/г). Данный диапазон не является специфичным для ВЗК и может наблюдаться при других воспалительных состояниях кишечника.';
+      } else {
+        interpretation.textContent = 'Выраженное повышение фекального кальпротектина (>200 мкг/г), требующее клинической интерпретации.';
+      }
+    }
+
+    function showResult(blockId, titleId, probabilityId, probability, threshold, highText, lowText) {
+      const resultBlock = document.getElementById(blockId);
+      const resultText = document.getElementById(titleId);
+      const probabilityText = document.getElementById(probabilityId);
 
       resultBlock.classList.remove('high', 'low');
 
       if (probability > threshold) {
         resultBlock.classList.add('high');
-        resultText.textContent = 'Высокая вероятность наличия ВЗК';
+        resultText.textContent = highText;
       } else {
         resultBlock.classList.add('low');
-        resultText.textContent = 'Низкая вероятность наличия ВЗК';
+        resultText.textContent = lowText;
       }
 
       probabilityText.textContent = 'Расчетная вероятность: ' + (probability * 100).toFixed(1).replace('.', ',') + '%';
-    });
+    }
 
     function resetForm() {
       document.getElementById('ibdForm').reset();
-      const resultBlock = document.getElementById('result');
-      resultBlock.classList.remove('high', 'low');
-      document.getElementById('resultText').textContent = '';
-      document.getElementById('probabilityText').textContent = '';
+
+      ['mainResult', 'additionalResult'].forEach(function(id) {
+        document.getElementById(id).classList.remove('high', 'low');
+      });
+
+      document.getElementById('mainResultText').textContent = '';
+      document.getElementById('mainProbabilityText').textContent = '';
+      document.getElementById('additionalResultText').textContent = '';
+      document.getElementById('additionalProbabilityText').textContent = '';
+      document.getElementById('calprotectinInterpretation').textContent = '';
     }
   </script>
 </body>
